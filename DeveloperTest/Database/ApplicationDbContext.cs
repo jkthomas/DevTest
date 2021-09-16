@@ -25,17 +25,11 @@ namespace DeveloperTest.Database
                 .Property(x => x.JobId)
                 .ValueGeneratedOnAdd();
 
-            modelBuilder.Entity<Job>()
-                .HasData(new Job
-                {
-                    JobId = 1,
-                    Engineer = "Test",
-                    When = DateTime.Now
-                });
-
             modelBuilder.Entity<Customer>()
                 .Property(customer => customer.CustomerId)
                 .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Job>().HasOne(job => job.Customer);
         }
     }
 }

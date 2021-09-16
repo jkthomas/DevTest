@@ -15,23 +15,37 @@ namespace DeveloperTest.Business
             this.context = context;
         }
 
+        /* In normal circumstances I would use AutoMapper, but since this took my too
+        much time already, I've decided to do manual mapping. */
         public JobModel[] GetJobs()
         {
-            return context.Jobs.Select(x => new JobModel
+            return context.Jobs.Select(job => new JobModel
             {
-                JobId = x.JobId,
-                Engineer = x.Engineer,
-                When = x.When
+                JobId = job.JobId,
+                Engineer = job.Engineer,
+                Customer = new CustomerModel()
+                {
+                    CustomerId = job.Customer.CustomerId,
+                    Name = job.Customer.Name,
+                    Type = job.Customer.Type,
+                },
+                When = job.When
             }).ToArray();
         }
 
         public JobModel GetJob(int jobId)
         {
-            return context.Jobs.Where(x => x.JobId == jobId).Select(x => new JobModel
+            return context.Jobs.Where(x => x.JobId == jobId).Select(job => new JobModel
             {
-                JobId = x.JobId,
-                Engineer = x.Engineer,
-                When = x.When
+                JobId = job.JobId,
+                Engineer = job.Engineer,
+                Customer = new CustomerModel()
+                {
+                    CustomerId = job.Customer.CustomerId,
+                    Name = job.Customer.Name,
+                    Type = job.Customer.Type,
+                },
+                When = job.When
             }).SingleOrDefault();
         }
 
@@ -40,6 +54,7 @@ namespace DeveloperTest.Business
             var addedJob = context.Jobs.Add(new Job
             {
                 Engineer = model.Engineer,
+                Customer = context.Customers.Single(customer => customer.CustomerId == (int)model.Customer.CustomerId),
                 When = model.When
             });
 
@@ -49,6 +64,12 @@ namespace DeveloperTest.Business
             {
                 JobId = addedJob.Entity.JobId,
                 Engineer = addedJob.Entity.Engineer,
+                Customer = new CustomerModel()
+                {
+                    CustomerId = addedJob.Entity.Customer.CustomerId,
+                    Name = addedJob.Entity.Customer.Name,
+                    Type = addedJob.Entity.Customer.Type,
+                },
                 When = addedJob.Entity.When
             };
         }
